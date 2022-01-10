@@ -1,0 +1,10 @@
+#!/bin/bash -e
+#
+# S2I run script for the 's2i_tomcat8.5_maven3.8.4' image.
+# The run script executes the server that runs your application.
+#
+# For more information see the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+exec /opt/webserver/bin/catalina.sh run

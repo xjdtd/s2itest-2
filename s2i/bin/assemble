@@ -1,0 +1,41 @@
+#!/bin/bash -e
+#
+# S2I assemble script for the 's2i_tomcat8.5_maven3.8.4' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+# If the 's2i_tomcat8.5_maven3.8.4' assemble script is executed with the '-h' flag, print the usage.
+if [[ "$1" == "-h" ]]; then
+	exec /usr/libexec/s2i/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
+  echo "---> Restoring build artifacts..."
+  mv /tmp/artifacts/* ./
+fi
+
+echo "---> Installing application source..."
+cp -Rf /tmp/src/. ./
+ls -l ./
+ls -l /tmp/src
+WORK_DIR=/tmp/src;
+cd $WORK_DIR;
+if [ ! z ${SVN_URL} ]; then
+  echo "Fetching source from Subversion repository ${SVN_URL}"
+  svn co ${SVN_URL} --username ${SVN_USER} --password ${SVN_PWD} --no-auth-cache
+  export SRC_DIR=`basename $SVN_URL`
+  echo "Finished fetching source from Subversion respository ${SVN_URL}"
+else
+  echo "SVN_URL not set, skip Subversion source download..."
+fi
+echo "---> Building application from source..."
+cd $WORK_DIR/$SRC_DIR/
+${BUILD_CMD}
+echo "---> Build application successfully."
+find /tmp/src/ -name '*.war' |xargs -i cp -v {} /opt/webserver/webapps/
+
