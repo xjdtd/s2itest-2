@@ -15,3 +15,5 @@ RUN chown -R jboss:root /opt/webserver && \
     chmod -R 777 /opt/rh/rh-maven35/root/user/share/maven && \
     chmod -R 777 /opt/rh/rh-maven35/root/bin
 USER 1002 
+RUN /usr/libexec/s2i/assemble
+CMD /usr/libexec/s2i/run
