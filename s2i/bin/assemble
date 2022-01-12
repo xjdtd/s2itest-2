@@ -8,6 +8,15 @@
 #
 
 # If the 's2i_tomcat8.5_maven3.8.4' assemble script is executed with the '-h' flag, print the usage.
+#!/bin/sh
+
+set -e
+
+source "${JBOSS_CONTAINER_UTIL_LOGGING_MODULE}/logging.sh"
+source "${JBOSS_CONTAINER_MAVEN_S2I_MODULE}/maven-s2i"
+source "${JBOSS_CONTAINER_JWS_S2I_MODULE}/s2i-core-hooks"
+
+
 if [[ "$1" == "-h" ]]; then
 	exec /usr/libexec/s2i/usage
 fi
@@ -35,7 +44,9 @@ else
 fi
 echo "---> Building application from source..."
 cd $WORK_DIR/$SRC_DIR/
-${BUILD_CMD}
+
+maven_s2i_build
+
 echo "---> Build application successfully."
 find /tmp/src/ -name '*.war' |xargs -i cp -v {} /opt/webserver/webapps/
 

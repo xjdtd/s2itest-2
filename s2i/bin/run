@@ -1,2 +1,2 @@
 #!/bin/bash -e
-exec /opt/webserver/bin/catalina.sh run
+exec nohup /opt/webserver/bin/catalina.sh run &
